@@ -1,6 +1,6 @@
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
-import { emailOTP } from "better-auth/plugins"; // ✅ add karo
+import { emailOTP } from "better-auth/plugins";
 import { MongoClient } from "mongodb";
 import { sendEmail } from "./email";
 

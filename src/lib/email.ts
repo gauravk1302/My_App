@@ -18,10 +18,16 @@ export const sendEmail = async ({
   subject: string;
   html: string;
 }) => {
-  await transporter.sendMail({
-    from: process.env.EMAIL_FROM,
-    to,
-    subject,
-    html,
-  });
+  try {
+    const info = await transporter.sendMail({
+      from: process.env.EMAIL_FROM,
+      to,
+      subject,
+      html,
+    });
+    console.log("✅ Email sent:", info.messageId);
+  } catch (err) {
+    console.error("❌ Email error:", err);
+    throw err;
+  }
 };

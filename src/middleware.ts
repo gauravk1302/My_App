@@ -3,24 +3,23 @@ import type { NextRequest } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
 
 export function middleware(request: NextRequest) {
-  const session = getSessionCookie(request); // ✅ better-auth ki cookie
+  const session = getSessionCookie(request);
   const { pathname } = request.nextUrl;
 
+  const isProtectedPath = pathname.startsWith("/dashboard");
   const isPublicPath =
     pathname === "/sign-in" ||
     pathname === "/sign-up" ||
-    pathname === "/verify-email";
+    pathname === "/verify-email" ||
+    pathname === "/forgot-password" ||
+    pathname.startsWith("/reset-password");
 
-  const isProtectedPath = pathname.startsWith("/dashboard");
-
-  // Logged in hai + public page kholne ki koshish → dashboard
-  if (isPublicPath && session) {
-    return NextResponse.redirect(new URL("/dashboard", request.nextUrl));
+  if (isProtectedPath && !session) {
+    return NextResponse.redirect(new URL("/sign-in", request.url));
   }
 
-  // Logged in nahi + protected page kholne ki koshish → sign-in
-  if (isProtectedPath && !session) {
-    return NextResponse.redirect(new URL("/sign-in", request.nextUrl));
+  if (isPublicPath && session) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   return NextResponse.next();
@@ -32,6 +31,8 @@ export const config = {
     "/sign-in",
     "/sign-up",
     "/verify-email",
+    "/forgot-password",
+    "/reset-password/:path*",
     "/dashboard/:path*",
   ],
 };
